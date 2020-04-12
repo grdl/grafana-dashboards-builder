@@ -1,3 +1,3 @@
-# grafana-dashboard-builder
+# grafana-dashboards-builder
 
-Grafana Dashboard Builder
+Grafana Dashboards Builder
