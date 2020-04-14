@@ -14,7 +14,7 @@ def test_load_valid_dashboard(tmp_path):
     dash = tmp_path / 'dash.dashboard.py'
     dash.write_text(sample_dash.format(title='dash'))
 
-    dashboards = builder.load_dashboards(tmp_path)
+    dashboards = builder.load_dashboards(str(tmp_path))
 
     assert len(dashboards) == 1
     assert len(dashboards[builder.DEFAULT_FOLDER]) == 1
@@ -25,7 +25,7 @@ def test_load_not_python(tmp_path):
     dash = tmp_path / 'dash.dashboard.py'
     dash.write_text('I am not a python file')
 
-    dashboards = builder.load_dashboards(tmp_path)
+    dashboards = builder.load_dashboards(str(tmp_path))
 
     assert len(dashboards) == 0
 
@@ -34,7 +34,7 @@ def test_load_empty_file(tmp_path):
     dash = tmp_path / 'dash.dashboard.py'
     dash.write_text('')
 
-    dashboards = builder.load_dashboards(tmp_path)
+    dashboards = builder.load_dashboards(str(tmp_path))
 
     assert len(dashboards) == 0
 
@@ -43,7 +43,7 @@ def test_load_wrong_extension(tmp_path):
     dash = tmp_path / 'dash.py'
     dash.write_text(sample_dash.format(title='dash'))
 
-    dashboards = builder.load_dashboards(tmp_path)
+    dashboards = builder.load_dashboards(str(tmp_path))
 
     assert len(dashboards) == 0
 
@@ -52,7 +52,7 @@ def test_load_without_dashboard(tmp_path):
     dash = tmp_path / 'dash.dashboard.py'
     dash.write_text('import grafanalib')
 
-    dashboards = builder.load_dashboards(tmp_path)
+    dashboards = builder.load_dashboards(str(tmp_path))
 
     assert len(dashboards) == 0
 
@@ -63,7 +63,7 @@ def test_load_multiple_files(tmp_path):
     dash1.write_text(sample_dash.format(title='dash1'))
     dash2.write_text(sample_dash.format(title='dash2'))
 
-    dashboards = builder.load_dashboards(tmp_path)
+    dashboards = builder.load_dashboards(str(tmp_path))
 
     assert len(dashboards) == 1
     assert len(dashboards[builder.DEFAULT_FOLDER]) == 2
@@ -80,7 +80,7 @@ def test_load_nested_dirs(tmp_path):
     dash1.write_text(sample_dash.format(title='dash1'))
     dash2.write_text(sample_dash.format(title='dash2'))
 
-    dashboards = builder.load_dashboards(tmp_path)
+    dashboards = builder.load_dashboards(str(tmp_path))
 
     assert len(dashboards) == 2
     assert len(dashboards['dir1']) == 1
@@ -106,7 +106,7 @@ def test_load_multiple_nested_dirs(tmp_path):
     dash2.write_text(sample_dash.format(title='dash2'))
     dash3.write_text(sample_dash.format(title='dash3'))
 
-    dashboards = builder.load_dashboards(tmp_path)
+    dashboards = builder.load_dashboards(str(tmp_path))
 
     assert len(dashboards) == 3
     assert len(dashboards[builder.DEFAULT_FOLDER]) == 1
@@ -129,7 +129,7 @@ def test_load_general_folder(tmp_path):
     dash0.write_text(sample_dash.format(title='dash0'))
     dash1.write_text(sample_dash.format(title='dash1'))
 
-    dashboards = builder.load_dashboards(tmp_path)
+    dashboards = builder.load_dashboards(str(tmp_path))
 
     assert len(dashboards) == 1
     assert len(dashboards[builder.DEFAULT_FOLDER]) == 2

@@ -16,9 +16,12 @@ def build(input_dir, output_dir):
     if input_dir == output_dir:
         raise click.BadArgumentUsage("'OUTPUT_DIR' can't be the same as 'INPUT_DIR'.")
 
-    click.echo('Starting Grafana Dashboards Builder')
-
     dashboards = load_dashboards(input_dir)
+
+    if len(dashboards) == 0:
+        click.echo("There are no dashboards to generate")
+        return
+
     generate_dashboards(dashboards, output_dir)
 
 
@@ -64,7 +67,7 @@ def load_dashboards(input_dir):
 
         # Key is the first level directory inside the input_dir in the dashboard path
         # If there are more nested dirs inside it, the key will still be the first-level one
-        key = path.relative_to(str(input_dir)).parts[0]
+        key = path.relative_to(input_dir).parts[0]
 
         # If key is the same as filename it means file is not nested in any directory but directly under the input_dir
         # It should go to the default "General" Grafana folder
@@ -86,15 +89,16 @@ def generate_dashboards(dashboards, output_dir):
     """
 
     shutil.rmtree(output_dir, ignore_errors=True)   # Remove the output dir, don't raise errors if dir doesn't exist
-    Path(output_dir).mkdir()
+    output_path = Path(output_dir)
+    output_path.mkdir()
 
     for key in dashboards:
-        subdir = output_dir / key
+        subdir = output_path / key
         subdir.mkdir(exist_ok=True)
 
         for dashboard in dashboards[key]:
-            output_path = output_dir / key / f'{dashboard.title}.json'
-            with open(output_path, 'w') as output:
+            output_file = output_path / key / f'{dashboard.title}.json'
+            with open(output_file, 'w') as output:
                 generator.write_dashboard(dashboard, output)
 
 

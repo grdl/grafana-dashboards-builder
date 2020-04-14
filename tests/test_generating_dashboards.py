@@ -23,8 +23,8 @@ def test_generate_single_dashboard(tmp_path):
     dash = tmp_path / 'dash.dashboard.py'
     dash.write_text(sample_dash.format(title=title))
 
-    dashboards = builder.load_dashboards(tmp_path)
-    builder.generate_dashboards(dashboards, out_path)
+    dashboards = builder.load_dashboards(str(tmp_path))
+    builder.generate_dashboards(dashboards, str(out_path))
 
     generated_json = out_path / builder.DEFAULT_FOLDER / f'{title}.json'
 
@@ -48,8 +48,8 @@ def test_out_dir_non_empty(tmp_path):
     dash = tmp_path / 'dash.dashboard.py'
     dash.write_text(sample_dash.format(title=title))
 
-    dashboards = builder.load_dashboards(tmp_path)
-    builder.generate_dashboards(dashboards, out_path)
+    dashboards = builder.load_dashboards(str(tmp_path))
+    builder.generate_dashboards(dashboards, str(out_path))
 
     generated_json = out_path / builder.DEFAULT_FOLDER / f'{title}.json'
 
@@ -104,8 +104,8 @@ def test_generating_multiple_dirs(tmp_path):
     dash2.write_text(sample_dash.format(title='dash2'))
     dash3.write_text(sample_dash.format(title='dash3'))
 
-    dashboards = builder.load_dashboards(in_path)
-    builder.generate_dashboards(dashboards, out_path)
+    dashboards = builder.load_dashboards(str(in_path))
+    builder.generate_dashboards(dashboards, str(out_path))
 
     assert (out_path / builder.DEFAULT_FOLDER / 'dash0.json').is_file()
     assert (out_path / 'dir1').is_dir()
