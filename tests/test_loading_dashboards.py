@@ -1,18 +1,10 @@
 import builder
 from grafanalib.core import Dashboard
 
-sample_dash_1 = '''
+sample_dash = '''
 from grafanalib.core import Dashboard
 dashboard = Dashboard(
-    title="dashboard1",
-    rows = []
-    )
-'''
-
-sample_dash_2 = '''
-from grafanalib.core import Dashboard
-dashboard = Dashboard(
-    title="dashboard2",
+    title="{title}",
     rows = []
     )
 '''
@@ -20,7 +12,7 @@ dashboard = Dashboard(
 
 def test_load_valid_dashboard(tmp_path):
     dash = tmp_path / 'dash.dashboard.py'
-    dash.write_text(sample_dash_1)
+    dash.write_text(sample_dash.format(title='dash'))
 
     dashboards = builder.load_dashboards(tmp_path)
 
@@ -49,7 +41,7 @@ def test_load_empty_file(tmp_path):
 
 def test_load_wrong_extension(tmp_path):
     dash = tmp_path / 'dash.py'
-    dash.write_text(sample_dash_1)
+    dash.write_text(sample_dash.format(title='dash'))
 
     dashboards = builder.load_dashboards(tmp_path)
 
@@ -68,8 +60,8 @@ def test_load_without_dashboard(tmp_path):
 def test_load_multiple_files(tmp_path):
     dash1 = tmp_path / 'dash1.dashboard.py'
     dash2 = tmp_path / 'dash2.dashboard.py'
-    dash1.write_text(sample_dash_1)
-    dash2.write_text(sample_dash_2)
+    dash1.write_text(sample_dash.format(title='dash1'))
+    dash2.write_text(sample_dash.format(title='dash2'))
 
     dashboards = builder.load_dashboards(tmp_path)
 
@@ -85,8 +77,8 @@ def test_load_nested_dirs(tmp_path):
 
     dash1 = dir1 / 'dash1.dashboard.py'
     dash2 = dir2 / 'dash2.dashboard.py'
-    dash1.write_text(sample_dash_1)
-    dash2.write_text(sample_dash_2)
+    dash1.write_text(sample_dash.format(title='dash1'))
+    dash2.write_text(sample_dash.format(title='dash2'))
 
     dashboards = builder.load_dashboards(tmp_path)
 
@@ -109,10 +101,10 @@ def test_load_multiple_nested_dirs(tmp_path):
     dash2 = dir2 / 'dash2.dashboard.py'
     dash3 = dir3 / 'dash3.dashboard.py'
 
-    dash0.write_text(sample_dash_1)
-    dash1.write_text(sample_dash_1)
-    dash2.write_text(sample_dash_1)
-    dash3.write_text(sample_dash_1)
+    dash0.write_text(sample_dash.format(title='dash0'))
+    dash1.write_text(sample_dash.format(title='dash1'))
+    dash2.write_text(sample_dash.format(title='dash2'))
+    dash3.write_text(sample_dash.format(title='dash3'))
 
     dashboards = builder.load_dashboards(tmp_path)
 

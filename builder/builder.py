@@ -1,12 +1,14 @@
 import click
+import shutil
 from pathlib import Path
-from grafanalib import _gen
+from grafanalib import _gen as generator
 
 ROOT_DIR = '.'
+DEFAULT_OUT = 'out'
 
 
 @click.command()
-@click.argument('input-dir', type=click.Path(exists=True, file_okay=False))
+@click.argument('input-dir', type=click.Path(file_okay=False, exists=True))
 @click.argument('output-dir', type=click.Path(file_okay=False), default='out')
 def build(input_dir, output_dir):
 
@@ -16,7 +18,8 @@ def build(input_dir, output_dir):
 
     click.echo('Starting Grafana Dashboards Builder')
 
-    load_dashboards(input_dir)
+    dashboards = load_dashboards(input_dir)
+    generate_dashboards(dashboards, output_dir)
 
 
 def load_dashboards(input_dir):
@@ -25,7 +28,10 @@ def load_dashboards(input_dir):
     Keys represent Grafana folders, but since Grafana allows only a single level of folder nesting we "flatten" dashboard.py files
     even if they're nested in multiple directories.
 
-    Example:
+    :param input_dir str: Path to directory containing dashboard sources.
+
+    :Example:
+
     For a following folder structure...
 
         input_dir/
@@ -48,10 +54,10 @@ def load_dashboards(input_dir):
 
     dashboards = {}
 
-    for path in Path(str(input_dir)).rglob(f'*{_gen.DASHBOARD_SUFFIX}'):
+    for path in Path(input_dir).rglob(f'*{generator.DASHBOARD_SUFFIX}'):
         try:
-            dashboard = _gen.load_dashboard(path)
-        except _gen.DashboardError:  # raised when file does not define 'dashboard' attribute
+            dashboard = generator.load_dashboard(str(path))
+        except generator.DashboardError:  # raised when file does not define 'dashboard' attribute
             continue
         except SyntaxError:  # raised when file contains invalid Python code
             continue
@@ -70,6 +76,25 @@ def load_dashboards(input_dir):
         dashboards[key].append(dashboard)
 
     return dashboards
+
+
+def generate_dashboards(dashboards, output_dir):
+    """
+    Generate and write dashboard json files into the output_dir. For each key in dashboards dict a new subfolder is created.
+    If output_dir already exists it will be removed and recreated.
+    """
+
+    shutil.rmtree(output_dir, ignore_errors=True)   # Remove the output dir, don't raise errors if dir doesn't exist
+    Path(output_dir).mkdir()
+
+    for key in dashboards:
+        subdir = output_dir / key
+        subdir.mkdir(exist_ok=True)
+
+        for dashboard in dashboards[key]:
+            output_path = output_dir / key / f'{dashboard.title}.json'
+            with open(output_path, 'w') as output:
+                generator.write_dashboard(dashboard, output)
 
 
 if __name__ == '__main__':
