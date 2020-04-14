@@ -15,7 +15,7 @@ def test_builder():
     runner = CliRunner()
     with runner.isolated_filesystem():
         in_path = Path('in')
-        out_path = Path('out')
+        out_path = Path(builder.DEFAULT_OUT)
 
         in_path.mkdir()
 

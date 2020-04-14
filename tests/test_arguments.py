@@ -37,7 +37,7 @@ def test_output_dir_is_a_file(tmp_path):
     path_in = tmp_path / 'dashboards'
     path_in.mkdir()
 
-    path_out = tmp_path / 'out'
+    path_out = tmp_path / builder.DEFAULT_OUT
     path_out.write_text('I am a file')
 
     runner = CliRunner()

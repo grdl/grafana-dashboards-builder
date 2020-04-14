@@ -9,7 +9,7 @@ DEFAULT_OUT = 'out'
 
 @click.command()
 @click.argument('input-dir', type=click.Path(file_okay=False, exists=True))
-@click.argument('output-dir', type=click.Path(file_okay=False), default='out')
+@click.argument('output-dir', type=click.Path(file_okay=False), default=DEFAULT_OUT)
 def build(input_dir, output_dir):
 
     # TODO: can this be checked in click.argument callback?
