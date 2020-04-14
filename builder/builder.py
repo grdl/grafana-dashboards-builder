@@ -3,7 +3,7 @@ import shutil
 from pathlib import Path
 from grafanalib import _gen as generator
 
-ROOT_DIR = '.'
+DEFAULT_FOLDER = 'General'
 DEFAULT_OUT = 'out'
 
 
@@ -46,7 +46,7 @@ def load_dashboards(input_dir):
     ...a loaded dashboards dictionary should look like this:
 
         dashboards = {
-            '.': [dash0],
+            'DEFAULT_FOLDER': [dash0],
             'dir1': [dash1],
             'dir2': [dash2, dash3]
         }
@@ -62,13 +62,14 @@ def load_dashboards(input_dir):
         except SyntaxError:  # raised when file contains invalid Python code
             continue
 
-        # key is the first level directory inside the input_dir in the dashboard path
-        # if there are more nested dirs inside it, the key will still be the first-level one
+        # Key is the first level directory inside the input_dir in the dashboard path
+        # If there are more nested dirs inside it, the key will still be the first-level one
         key = path.relative_to(str(input_dir)).parts[0]
 
-        # if key is the same as filename it means file is not nested in any directory but directly under the input_dir
+        # If key is the same as filename it means file is not nested in any directory but directly under the input_dir
+        # It should go to the default "General" Grafana folder
         if key == path.name:
-            key = ROOT_DIR
+            key = DEFAULT_FOLDER
 
         if key not in dashboards:
             dashboards[key] = []

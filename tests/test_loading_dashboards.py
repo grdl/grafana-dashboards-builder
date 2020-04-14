@@ -17,8 +17,8 @@ def test_load_valid_dashboard(tmp_path):
     dashboards = builder.load_dashboards(tmp_path)
 
     assert len(dashboards) == 1
-    assert len(dashboards[builder.ROOT_DIR]) == 1
-    assert isinstance(dashboards[builder.ROOT_DIR][0], Dashboard)
+    assert len(dashboards[builder.DEFAULT_FOLDER]) == 1
+    assert isinstance(dashboards[builder.DEFAULT_FOLDER][0], Dashboard)
 
 
 def test_load_not_python(tmp_path):
@@ -66,7 +66,7 @@ def test_load_multiple_files(tmp_path):
     dashboards = builder.load_dashboards(tmp_path)
 
     assert len(dashboards) == 1
-    assert len(dashboards[builder.ROOT_DIR]) == 2
+    assert len(dashboards[builder.DEFAULT_FOLDER]) == 2
 
 
 def test_load_nested_dirs(tmp_path):
@@ -85,7 +85,7 @@ def test_load_nested_dirs(tmp_path):
     assert len(dashboards) == 2
     assert len(dashboards['dir1']) == 1
     assert len(dashboards['dir2']) == 1
-    assert builder.ROOT_DIR not in dashboards
+    assert builder.DEFAULT_FOLDER not in dashboards
 
 
 def test_load_multiple_nested_dirs(tmp_path):
@@ -109,6 +109,27 @@ def test_load_multiple_nested_dirs(tmp_path):
     dashboards = builder.load_dashboards(tmp_path)
 
     assert len(dashboards) == 3
-    assert len(dashboards[builder.ROOT_DIR]) == 1
+    assert len(dashboards[builder.DEFAULT_FOLDER]) == 1
     assert len(dashboards['dir1']) == 1
     assert len(dashboards['dir2']) == 2
+
+
+def test_load_general_folder(tmp_path):
+    """
+    If there are dashboards in the root of input_dir and inside the "General" default folder,
+    they all should be loaded under the same DEFAULT_FOLDER key
+    """
+
+    general = tmp_path / 'General'
+    general.mkdir()
+
+    dash0 = tmp_path / 'dash0.dashboard.py'
+    dash1 = general / 'dash1.dashboard.py'
+
+    dash0.write_text(sample_dash.format(title='dash0'))
+    dash1.write_text(sample_dash.format(title='dash1'))
+
+    dashboards = builder.load_dashboards(tmp_path)
+
+    assert len(dashboards) == 1
+    assert len(dashboards[builder.DEFAULT_FOLDER]) == 2
