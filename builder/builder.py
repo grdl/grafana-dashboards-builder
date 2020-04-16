@@ -3,20 +3,27 @@ import shutil
 from pathlib import Path
 from grafanalib import _gen as generator
 
+# Default folder in Grafana where dashboards without a parent directory go
 DEFAULT_FOLDER = 'General'
+
+# Default output directory for generated dashboard json files
 DEFAULT_OUT = 'out'
+
+# Separator used to split directory name from filename when using "--from-configmap" flag (ie. without nested input directories)
+DIR_SEPARATOR = '--'
 
 
 @click.command()
 @click.argument('input-dir', type=click.Path(file_okay=False, exists=True))
 @click.argument('output-dir', type=click.Path(file_okay=False), default=DEFAULT_OUT)
-def build(input_dir, output_dir):
+@click.option('--from-configmap', is_flag=True, default=False)
+def build(input_dir, output_dir, from_configmap):
 
     # TODO: can this be checked in click.argument callback?
     if input_dir == output_dir:
         raise click.BadArgumentUsage("'OUTPUT_DIR' can't be the same as 'INPUT_DIR'.")
 
-    dashboards = load_dashboards(input_dir)
+    dashboards = load_dashboards(input_dir, from_configmap)
 
     if len(dashboards) == 0:
         click.echo("There are no dashboards to generate")
@@ -25,7 +32,7 @@ def build(input_dir, output_dir):
     generate_dashboards(dashboards, output_dir)
 
 
-def load_dashboards(input_dir):
+def load_dashboards(input_dir, from_configmap=False):
     """
     Load .dashboard.py files into a dictionary where keys are first level directories.
     Keys represent Grafana folders, but since Grafana allows only a single level of folder nesting we "flatten" dashboard.py files
@@ -70,9 +77,13 @@ def load_dashboards(input_dir):
         key = path.relative_to(input_dir).parts[0]
 
         # If key is the same as filename it means file is not nested in any directory but directly under the input_dir
-        # It should go to the default "General" Grafana folder
+        # If the --from-configmap flag is set, we extract the directory from filename (eg: "dirname--dash1.dashboard.py")
+        # Otherwise it goes to the default "General" Grafana folder
         if key == path.name:
             key = DEFAULT_FOLDER
+
+            if from_configmap and DIR_SEPARATOR in path.name:
+                key = path.name.split(DIR_SEPARATOR, 1)[0]
 
         if key not in dashboards:
             dashboards[key] = []

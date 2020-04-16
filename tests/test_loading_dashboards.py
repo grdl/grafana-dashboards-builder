@@ -133,3 +133,27 @@ def test_load_general_folder(tmp_path):
 
     assert len(dashboards) == 1
     assert len(dashboards[builder.DEFAULT_FOLDER]) == 2
+
+
+def test_load_from_configmap(tmp_path):
+    dash0 = tmp_path / 'dash0.dashboard.py'
+    dash1 = tmp_path / f'dir1{builder.DIR_SEPARATOR}dash1.dashboard.py'
+    dash2 = tmp_path / f'dir2{builder.DIR_SEPARATOR}-dash2.dashboard.py'
+    dash3 = tmp_path / f'dir2{builder.DIR_SEPARATOR}dash3.dashboard.py'
+
+    dash0.write_text(sample_dash.format(title='dash0'))
+    dash1.write_text(sample_dash.format(title='dash1'))
+    dash2.write_text(sample_dash.format(title='dash2'))
+    dash3.write_text(sample_dash.format(title='dash3'))
+
+    dashboards = builder.load_dashboards(str(tmp_path), from_configmap=True)
+
+    assert len(dashboards) == 3
+    assert len(dashboards[builder.DEFAULT_FOLDER]) == 1
+    assert len(dashboards['dir1']) == 1
+    assert len(dashboards['dir2']) == 2
+
+    dashboards = builder.load_dashboards(str(tmp_path), from_configmap=False)
+
+    assert len(dashboards) == 1
+    assert len(dashboards[builder.DEFAULT_FOLDER]) == 4
