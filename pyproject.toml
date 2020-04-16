@@ -1,8 +1,8 @@
 [tool.poetry]
 name = "grafana-dashboards-builder"
 version = "0.1.0"
-description = "Grafana Dashboards Builder"
-authors = ["Grzegorz Dlugoszewski <g.dlugoszewski@gmail.com>"]
+description = "A wrapper around grafanalib which simplifies generating multiple dashboards."
+authors = ["Grzegorz Dlugoszewski <pypi@grdl.dev>"]
 
 packages = [
     { include = "builder" }

@@ -16,8 +16,15 @@ DIR_SEPARATOR = '--'
 @click.command()
 @click.argument('input-dir', type=click.Path(file_okay=False, exists=True))
 @click.argument('output-dir', type=click.Path(file_okay=False), default=DEFAULT_OUT)
-@click.option('--from-configmap', is_flag=True, default=False)
+@click.option('--from-configmap', is_flag=True, default=False, help="generate output directories based on a source files prefix and a '--' separator")
 def build(input_dir, output_dir, from_configmap):
+    """
+    Grafana Dashboards Builder - a wrapper around grafanalib which simplifies generating multiple dashboards.
+
+    INPUT_DIR is the directory tree with dashboard sources.
+
+    OUTPUT_DIR is the directory where generated dashboards are placed (defaults to ./out).
+    """
 
     # TODO: can this be checked in click.argument callback?
     if input_dir == output_dir:
