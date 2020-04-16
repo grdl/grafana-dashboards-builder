@@ -1,0 +1,41 @@
+image: python:3.6-alpine
+
+variables:
+  PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
+
+cache:
+  paths:
+    - .cache/pip
+    - venv/
+
+stages:
+  - tests
+  - build
+  - publish
+
+before_script:
+  - python -V
+  - pip install poetry
+  - poetry --version
+  - poetry config settings.virtualenvs.in-project true
+  - poetry install -vv
+
+test:
+  stage: test
+  script:
+    - poetry run pytest
+
+build:
+  stage: build
+  script:
+    - poetry build
+  artifacts:
+    paths:
+      - dist/*
+
+publish:
+  stage: publish
+  script:
+    - echo "I'm going to publish"
+  only:
+    - master
