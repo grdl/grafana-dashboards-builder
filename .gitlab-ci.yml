@@ -9,7 +9,7 @@ cache:
     - venv/
 
 stages:
-  - tests
+  - test
   - build
   - publish
 
