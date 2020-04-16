@@ -6,7 +6,7 @@ variables:
 cache:
   paths:
     - .cache/pip
-    - venv/
+    - .venv/
 
 stages:
   - test
@@ -17,7 +17,7 @@ before_script:
   - python -V
   - pip install poetry
   - poetry --version
-  - poetry config settings.virtualenvs.in-project true
+  - poetry config virtualenvs.in-project true
   - poetry install -vv
 
 test:
