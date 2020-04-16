@@ -6,9 +6,9 @@ A wrapper around [grafanalib](https://github.com/weaveworks/grafanalib) which si
 
 Grafanalib is a fantastic tool which lets you generate Grafana dashboards from simple Python scripts. Unfortunately, it can only read single files as dashboard sources and doesn't have a concept of multiple output directories. Those limitations make it hard to provision an entire Grafana instance with many folders and multiple dashboard sources.
 
-Grafana Dashboard Builder recursively finds all `.dashboard.py` files in a directory tree. It generates dashboards and places them in a one-level-deep subdirectories which represent [Grafana folders](https://grafana.com/docs/grafana/latest/reference/dashboard_folders/).
+Grafana Dashboard Builder recursively finds all `.dashboard.py` files in a directory tree. It generates dashboards and places them in a subdirectories which represent [Grafana folders](https://grafana.com/docs/grafana/latest/reference/dashboard_folders/).
 
-It's written with Kubernetes in mind so it also has an ability to parse filenames mounted from a flat ConfigMap and generate nested output directory structure (see [examples](#Examples) below).
+It's written with Kubernetes in mind so it can also generate nested output directory structure even when loading sources mounted from a flat ConfigMap (see [examples](#sources-in-a-configmap) below).
 
 
 ## Installation
@@ -33,11 +33,9 @@ It's written with Kubernetes in mind so it also has an ability to parse filename
 
 ### Sources in nested directories
 
-Grafana supports only one level of depth for [folders](https://grafana.com/docs/grafana/latest/reference/dashboard_folders/). So even when dashboard sources are nested in multiple subdirectories the output dashboards will have only one parent directory (the most shallow one). 
+Grafana supports only one level of depth for [folders](https://grafana.com/docs/grafana/latest/reference/dashboard_folders/). So even when dashboard sources are nested in multiple subdirectories the output dashboards will have only one parent directory (the most shallow one). Source dashboards that don't have any parent directory will be placed in the default `General` folder.
 
-Source dashboards that don't have any parent directory will be placed in the default `General` folder.
-
-Given a following input directory tree:
+For example, given a following input directory tree:
 
     dashboards_in/
         main.dashboard.py
@@ -66,9 +64,9 @@ A following output directory will be generated:
 
 When running Grafana in Kubernetes cluster it's possible to run Grafana Dashboard Builder as a sidecar which loads dashboard sources from a ConfigMap and generates them into Grafana's `/var/lib/grafana/dashboards` directory.
 
-ConfigMaps don't support nested directory structures so enable mapping dashboards to different folders we can prefix the sources filenames with a `folder--` prefix. When Grafana Dashboard Builder runs with `--from-configmap` flag it parses the filenames and generates output directories based on found prefixes. Filenames without a prefix will be placed in the default `General` folder.
+ConfigMaps don't support nested directory structures so to enable mapping dashboards to different folders we can prefix the sources filenames with a `folder--` prefix. When Grafana Dashboard Builder runs with `--from-configmap` flag, it parses the filenames and generates output directories based on found prefixes. Filenames without a prefix will be placed in the default `General` folder.
 
-Given a following input directory:
+For example, given a following input directory:
 
     dashboards_in/
         main.dashboard.py
