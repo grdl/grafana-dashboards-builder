@@ -10,7 +10,6 @@ cache:
 
 stages:
   - test
-  - build
   - publish
 
 before_script:
@@ -25,17 +24,9 @@ test:
   script:
     - poetry run pytest
 
-build:
-  stage: build
-  script:
-    - poetry build
-  artifacts:
-    paths:
-      - dist/*
-
 publish:
   stage: publish
   script:
-    - echo "I'm going to publish"
+    - poetry publish --build --username $PYPI_USER --password $PYPI_PASSWORD
   only:
     - master
