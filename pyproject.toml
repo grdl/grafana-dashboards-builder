@@ -1,6 +1,7 @@
 [tool.poetry]
 name = "grafana-dashboards-builder"
-version = "0.2.0"
+# Update also __version__ (https://github.com/python-poetry/poetry/issues/144)
+version = "0.3.0"
 description = "A wrapper around grafanalib which simplifies generating multiple dashboards."
 authors = ["Grzegorz Dlugoszewski <pypi@grdl.dev>"]
 maintainers = ["Grzegorz Dlugoszewski <pypi@grdl.dev>"]

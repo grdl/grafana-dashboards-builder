@@ -1,4 +1,4 @@
-import builder
+from builder import builder
 from click.testing import CliRunner
 
 

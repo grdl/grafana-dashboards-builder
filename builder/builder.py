@@ -1,5 +1,6 @@
 import click
 import shutil
+from . import __version__
 from pathlib import Path
 from grafanalib import _gen as generator
 
@@ -14,6 +15,7 @@ DIR_SEPARATOR = '--'
 
 
 @click.command()
+@click.version_option(version=__version__)
 @click.argument('input-dir', type=click.Path(file_okay=False, exists=True))
 @click.argument('output-dir', type=click.Path(file_okay=False), default=DEFAULT_OUT)
 @click.option('--from-configmap', is_flag=True, default=False, help="generate output directories based on a source files prefix and a '--' separator")

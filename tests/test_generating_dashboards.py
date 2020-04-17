@@ -1,4 +1,4 @@
-import builder
+from builder import builder
 from pathlib import Path
 from grafanalib.core import Dashboard
 

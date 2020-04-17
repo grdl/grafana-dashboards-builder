@@ -1,4 +1,4 @@
-import builder
+from builder import builder
 from grafanalib.core import Dashboard
 
 sample_dash = '''
