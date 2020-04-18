@@ -110,7 +110,7 @@ def generate_dashboards(dashboards, output_dir):
 
     shutil.rmtree(output_dir, ignore_errors=True)   # Remove the output dir, don't raise errors if dir doesn't exist
     output_path = Path(output_dir)
-    output_path.mkdir()
+    output_path.mkdir(exist_ok=True)  # Directory mounted as a Docker volume can't be deleted so it's fine if it exists
 
     for key in dashboards:
         subdir = output_path / key
